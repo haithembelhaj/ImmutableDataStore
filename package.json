@@ -1,0 +1,30 @@
+{
+  "author": "Haithem Bel Haj",
+  "name": "ImmutableDataStore",
+  "version": "0.0.1",
+  "dependencies": {},
+  "private": true,
+  "devDependencies": {
+    "babelify": "*",
+    "grunt": "*",
+    "grunt-browserify": "*",
+    "grunt-contrib-clean": "*",
+    "grunt-contrib-uglify": "*",
+    "grunt-contrib-watch": "*",
+    "grunt-karma": "*",
+    "jasmine-core": "*",
+    "karma": "*",
+    "karma-browserify": "*",
+    "karma-chrome-launcher": "*",
+    "karma-firefox-launcher": "*",
+    "karma-jasmine": "*",
+    "karma-mocha-reporter": "*",
+    "karma-safari-launcher": "*",
+    "load-grunt-tasks": "*",
+    "lodash": "*",
+    "time-grunt": "*"
+  },
+  "engines": {
+    "node": ">=0.8.0"
+  }
+}
