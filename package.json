@@ -2,7 +2,10 @@
   "author": "Haithem Bel Haj",
   "name": "ImmutableDataStore",
   "version": "0.0.1",
-  "dependencies": {},
+  "dependencies": {
+    "immutable": "^3.7.1",
+    "rx": "^2.5.1"
+  },
   "private": true,
   "devDependencies": {
     "babelify": "*",
@@ -18,10 +21,14 @@
     "karma-chrome-launcher": "*",
     "karma-firefox-launcher": "*",
     "karma-jasmine": "*",
+    "karma-mocha": "^0.1.10",
     "karma-mocha-reporter": "*",
+    "karma-phantomjs-launcher": "^0.1.4",
     "karma-safari-launcher": "*",
+    "karma-sinon-chai": "^0.3.0",
     "load-grunt-tasks": "*",
     "lodash": "*",
+    "mocha": "^2.2.1",
     "time-grunt": "*"
   },
   "engines": {

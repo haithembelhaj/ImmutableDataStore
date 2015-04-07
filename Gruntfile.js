@@ -37,7 +37,7 @@ module.exports = function (grunt){
                     '<%= config.dest %>/js/main.js': ['<%= config.src %>/{,*/}*.js']
                 },
                 options:{
-                    transform: ['6to5ify']
+                    transform: ['babelify']
                 }
             }
         }
