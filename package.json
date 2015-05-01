@@ -1,6 +1,6 @@
 {
   "author": "Haithem Bel Haj",
-  "name": "ImmutableDataStore",
+  "name": "immutable-data-store",
   "version": "0.0.1",
   "keywords":[
     "immutable",
