@@ -13,7 +13,7 @@ npm install immutable-data-store
 
 ```js
 
-va Store = require('immutable-data-store').Store;
+var Store = require('immutable-data-store').Store;
 var Observer = require('immutable-data-store').Observer;
 
 // initialize with some data
