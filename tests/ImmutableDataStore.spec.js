@@ -1,6 +1,6 @@
 
 import Immutable from 'immutable';
-import {ImmutableDataStore, Observer} from '../src/ImmutableDataStore';
+import {Store, Observer} from '../src/ImmutableDataStore';
 
 
 describe('ImmutableDataStore specs', ()=>{
@@ -9,7 +9,7 @@ describe('ImmutableDataStore specs', ()=>{
 
         const schema = {a: {b: {c: 1}}};
 
-        const immutableStore = new ImmutableDataStore(schema);
+        const immutableStore = new Store(schema);
 
         expect(immutableStore.get('a.b.c')).to.equal(1);
     });
@@ -19,7 +19,7 @@ describe('ImmutableDataStore specs', ()=>{
 
         const schema = {a: {b: {c: 1}}};
 
-        const immutableStore = new ImmutableDataStore(schema);
+        const immutableStore = new Store(schema);
 
         immutableStore.set('a.b.c', 2);
 
@@ -30,7 +30,7 @@ describe('ImmutableDataStore specs', ()=>{
 
         const schema = {a: {b: {c: 1}}};
 
-        const immutableStore = new ImmutableDataStore(schema);
+        const immutableStore = new Store(schema);
 
         const path = 'a.b.c';
 
@@ -47,7 +47,7 @@ describe('ImmutableDataStore specs', ()=>{
 
         const schema = {a: {b: {c: 1}}};
 
-        const immutableStore = new ImmutableDataStore(schema);
+        const immutableStore = new Store(schema);
 
         const path = 'a.b';
 
@@ -65,7 +65,7 @@ describe('ImmutableDataStore specs', ()=>{
 
         const schema = {a: {b: {c: [1, 2, 3], d:[1, 1]}}};
 
-        const immutableStore = new ImmutableDataStore(schema);
+        const immutableStore = new Store(schema);
 
         const path = 'a.b';
 
@@ -88,7 +88,7 @@ describe('ImmutableDataStore specs', ()=>{
 
         const schema = {a: {b: {c: [1, 2, 3]}}};
 
-        const immutableStore = new ImmutableDataStore(schema);
+        const immutableStore = new Store(schema);
 
         const path = 'a.b.c';
 
@@ -114,7 +114,7 @@ describe('Observer spec', ()=>{
 
         const schema = {a: {b: {c: [1, 2, 3]}}};
 
-        const immutableStore = new ImmutableDataStore(schema);
+        const immutableStore = new Store(schema);
 
         const observer = new Observer(immutableStore);
 
@@ -131,7 +131,7 @@ describe('Observer spec', ()=>{
 
         const schema = {a: {b: {c: [1, 2, 3]}}};
 
-        const immutableStore = new ImmutableDataStore(schema);
+        const immutableStore = new Store(schema);
 
         const observer = new Observer(immutableStore);
 

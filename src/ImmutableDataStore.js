@@ -16,7 +16,7 @@ const PathSeparator = '.';
  *
  * @author Haithem Bel Haj
  */
-export class ImmutableDataStore extends EventEmitter{
+export class Store extends EventEmitter{
 
     /**
      * Constructor for the class

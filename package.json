@@ -2,11 +2,20 @@
   "author": "Haithem Bel Haj",
   "name": "ImmutableDataStore",
   "version": "0.0.1",
+  "keywords":[
+    "immutable",
+    "observable",
+    "datastore"
+  ],
+  "repository":{
+    "type": "git",
+    "url": "https://github.com/haithembelhaj/ImmutableDataStore"
+  },
+  "main": "dist/ImmutableDataStore.js",
   "dependencies": {
     "immutable": "^3.7.1",
     "rx": "^2.5.1"
   },
-  "private": true,
   "devDependencies": {
     "babel": "^5.1.13",
     "babelify": "*",
@@ -35,5 +44,6 @@
   },
   "engines": {
     "node": ">=0.8.0"
-  }
+  },
+  "license": "MIT"
 }

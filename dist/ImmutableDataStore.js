@@ -39,7 +39,7 @@ var PathSeparator = '.';
  * @author Haithem Bel Haj
  */
 
-var ImmutableDataStore = (function (_EventEmitter) {
+var Store = (function (_EventEmitter) {
 
     /**
      * Constructor for the class
@@ -50,21 +50,21 @@ var ImmutableDataStore = (function (_EventEmitter) {
      * @param bufferSize
      */
 
-    function ImmutableDataStore(schema) {
+    function Store(schema) {
         var bufferSize = arguments[1] === undefined ? 1 : arguments[1];
 
-        _classCallCheck(this, ImmutableDataStore);
+        _classCallCheck(this, Store);
 
-        _get(Object.getPrototypeOf(ImmutableDataStore.prototype), 'constructor', this).call(this);
+        _get(Object.getPrototypeOf(Store.prototype), 'constructor', this).call(this);
 
         this.data = _Immutable2['default'].fromJS(schema);
 
         this.history = new Array(bufferSize);
     }
 
-    _inherits(ImmutableDataStore, _EventEmitter);
+    _inherits(Store, _EventEmitter);
 
-    _createClass(ImmutableDataStore, [{
+    _createClass(Store, [{
         key: 'get',
 
         /**
@@ -75,7 +75,7 @@ var ImmutableDataStore = (function (_EventEmitter) {
          */
         value: function get(path) {
 
-            return this.data.getIn(path.split(PathSeparator));
+            return this.data.getIn(getPathArray(path));
         }
     }, {
         key: 'set',
@@ -94,16 +94,10 @@ var ImmutableDataStore = (function (_EventEmitter) {
                 path = '';
             }
 
-            var pathArray = path === '' ? [] : path.split(PathSeparator);
-
-            var newData = this.data.setIn(pathArray, _Immutable2['default'].fromJS(value));
+            var newData = this.data.setIn(getPathArray(path), _Immutable2['default'].fromJS(value));
 
             // nothing to see here
             if (_Immutable2['default'].is(newData, this.data)) {
-                return;
-            }var changes = diff(this.data, newData, pathArray, splitPaths(pathArray));
-
-            if (changes.length === 0) {
                 return;
             } // save the histrory
             this.history.unshift(this.data);
@@ -113,7 +107,7 @@ var ImmutableDataStore = (function (_EventEmitter) {
             this.data = newData;
 
             // emit the change event
-            this.emit('change', changes);
+            this.emit('change', path);
         }
     }, {
         key: 'update',
@@ -136,10 +130,10 @@ var ImmutableDataStore = (function (_EventEmitter) {
         }
     }]);
 
-    return ImmutableDataStore;
+    return Store;
 })(_EventEmitter2.EventEmitter);
 
-exports.ImmutableDataStore = ImmutableDataStore;
+exports.Store = Store;
 
 /**
  * Observer Class
@@ -170,10 +164,16 @@ var Observer = (function () {
          * @returns {RxStream}
          */
         value: function observe() {
+            var _this = this;
+
             var path = arguments[0] === undefined ? '' : arguments[0];
 
-            return _Rx2['default'].Observable.fromEvent(this.store, 'change').filter(function (changes) {
-                return changes.indexOf(path) >= -1;
+            var pathData = this.store.get(path);
+
+            return _Rx2['default'].Observable.fromEvent(this.store, 'change').filter(function () {
+                return pathData !== _this.store.get(path);
+            }).map(function () {
+                return pathData = _this.store.get(path);
             });
         }
     }]);
@@ -184,7 +184,6 @@ var Observer = (function () {
 exports.Observer = Observer;
 
 /**
- *
  * Get the diff paths from two immutable data structures
  *
  * @param a
@@ -212,13 +211,13 @@ function diff(a, b) {
     return changes;
 }
 
-function splitPaths(pathArray) {
+/**
+ * construct path array from path string
+ *
+ * @param path
+ * @returns {Array}
+ */
+function getPathArray(path) {
 
-    return pathArray.reduce(function (last, current) {
-
-        var lastPath = last[last.lenght - 1];
-        var prepend = lastPath ? lastPath + PathSeparator : '';
-
-        return last.concat([prepend + current]);
-    }, []);
+    return path === '' ? [] : path.split(PathSeparator);
 }
