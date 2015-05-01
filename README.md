@@ -6,7 +6,7 @@ This store can easily be hooked to an Observer for Granular path observation. Th
 ## Install
 
 ```
-npm install ImmutableDataStore
+npm install immutable-data-store
 ```
 
 ## Usage
