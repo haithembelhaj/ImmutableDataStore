@@ -1,13 +1,12 @@
 # ImmutableDataStore
 
 An Observable Data Store Based on Immutable Data for [ImmutableJS](https://github.com/facebook/immutable-js). The Change detection is super performant thanks to the immutable nature of the data.
-This store can easily be hooked to an Observer for Granular path observation. The included Observer is based on [RxJS](https://github.com/Reactive-Extensions/RxJS);
+This store can easily be hooked to an Observer for Granular path observation. The included Observer is based on [RxJS](https://github.com/Reactive-Extensions/RxJS).
 
 ## Install
 
 ```
 npm install ImmutableDataStore
-
 ```
 
 ## Usage
