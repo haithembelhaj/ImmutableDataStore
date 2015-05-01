@@ -1,95 +1,165 @@
-
+/**
+ * Use Immutablejs and RX to do the trick
+ */
 import Immutable from 'immutable';
 import {EventEmitter} from 'events';
 import Rx from 'rx';
 
+// I do like the dots
 const PathSeparator = '.';
 
+/**
+ * An Immutable Data Store
+ * It's a simple store with getters and setters
+ * Detect changes to the underlying immutable data
+ * Supports History for Time Travel
+ *
+ * @author Haithem Bel Haj
+ */
 export class ImmutableDataStore extends EventEmitter{
 
+    /**
+     * Constructor for the class
+     * Takes a schema with initital data
+     * and a bufferSize for the history
+     *
+     * @param schema
+     * @param bufferSize
+     */
     constructor(schema, bufferSize = 1) {
+
+        super();
 
         this.data = Immutable.fromJS(schema);
 
         this.history = new Array(bufferSize);
     }
 
+    /**
+     * get a path from the store
+     *
+     * @param path
+     * @returns {any|*}
+     */
     get(path){
 
-        return this.data.getIn(path.split(PathSeparator))
+        return this.data.getIn(getPathArray(path));
     }
 
+    /**
+     * Set a path from store
+     *
+     * @param path
+     * @param value
+     */
     set(path, value){
 
-        const pathArray = path.split(PathSeparator);
+        if(value === undefined){
 
-        const newData =  this.data.setIn(pathArray, value);
+            value = path;
+            path = '';
+        }
 
-        // bailout if nothing changes
+        const newData = this.data.setIn(getPathArray(path), Immutable.fromJS(value));
+
+        // nothing to see here
         if(Immutable.is(newData, this.data))
             return;
 
-        const changes = this._getChanges(pathArray, newData, this._getParentChanges(pathArray));
-
-        this.emit('change', changes);
-
+        // save the histrory
         this.history.unshift(this.data);
         this.history.pop();
 
+        // update the data
         this.data = newData;
 
+        // emit the change event
+        this.emit('change', path);
     }
 
-    _getParentChanges(paths){
+    /**
+     * update path with function
+     *
+     * @param path
+     * @param func
+     */
+    update(path, func){
 
-        let changes = [];
+        if(typeof path === 'function'){
 
-        paths.slice(0,-1).reduce((prev, actual)=> {
+            func = path;
+            path = '';
+        }
 
-            const next = prev.concat([actual]);
-
-            changes.push(next.join(PathSeparator));
-
-            return next;
-        }, []);
-
-        return changes;
-    }
-
-    _getChanges(paths, newData, changes = []){
-
-        const oldValue = this.data.getIn(paths);
-        const newValue = newData.getIn(paths);
-
-
-        if(Immutable.is(oldValue, newValue))
-            return true;
-
-        changes.push(paths.join(PathSeparator));
-
-        if(oldValue instanceof Immutable.Iterable)
-            oldValue.forEach((v, k) => this._getChanges(paths.concat([k]), newData, changes));
-
-        return changes;
+        this.set(path, func(this.get(path)));
     }
 }
 
-
+/**
+ * Observer Class
+ * Observe an Immutable Data Store for changes
+ * Just a wrapper on Rx
+ *
+ */
 export class Observer {
 
-
+    /**
+     * Construct with a store
+     * @param store
+     */
     constructor(store){
 
         this.store = store;
     }
 
+    /**
+     * Some nice path observation method
+     * @param path
+     * @returns {RxStream}
+     */
+    observe(path = ''){
 
-    observe(path){
+        let pathData = this.store.get(path);
 
         return Rx.Observable
             .fromEvent(this.store, 'change')
-            .filter(changes => !path || changes.indexOf(path) >= -1)
+            .filter(() => pathData !== this.store.get(path))
+            .map(()=> pathData = this.store.get(path))
+    }
+}
 
+/**
+ * Get the diff paths from two immutable data structures
+ *
+ * @param a
+ * @param b
+ * @param paths
+ * @param changes
+ * @returns {Array}
+ */
+function diff(a, b, paths = [], changes = []){
+
+    const oldValue = a.getIn(paths);
+    const newValue = b.getIn(paths);
+
+    if(oldValue !== newValue){
+
+        changes.push(paths.join(PathSeparator));
+
+        if(oldValue instanceof Immutable.Iterable)
+            oldValue.forEach((v, k) => diff(a, b, paths.concat([k]), changes));
     }
 
+    return changes;
+}
+
+/**
+ * construct path array from path string
+ *
+ * @param path
+ * @returns {Array}
+ */
+function getPathArray(path){
+
+    return (path === '')? [] : path.split(PathSeparator);
 }

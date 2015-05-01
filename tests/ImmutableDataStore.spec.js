@@ -1,4 +1,5 @@
 
+import Immutable from 'immutable';
 import {ImmutableDataStore, Observer} from '../src/ImmutableDataStore';
 
 
@@ -40,34 +41,47 @@ describe('ImmutableDataStore specs', ()=>{
         immutableStore.set(path, 2);
 
         spy.should.have.been.called;
-
-        expect(spy.lastCall.args[0]).include(path);
     });
 
+    it('shouldnt trigger change event', ()=>{
 
-    it('should trigger change event for iterable change', ()=>{
-
-        const schema = {a: {b: {c: [1, 2, 3]}}};
+        const schema = {a: {b: {c: 1}}};
 
         const immutableStore = new ImmutableDataStore(schema);
 
-        const path = 'a.b.c';
+        const path = 'a.b';
 
         const spy = sinon.spy();
 
         immutableStore.on('change', spy);
 
-        immutableStore.set(path, immutableStore.get(path).set(1, 3));
+        immutableStore.set(path, {c: 1});
+
+        spy.should.not.have.been.called;
+    });
+
+
+    it('should trigger change event for iterable change', ()=>{
+
+        const schema = {a: {b: {c: [1, 2, 3], d:[1, 1]}}};
+
+        const immutableStore = new ImmutableDataStore(schema);
+
+        const path = 'a.b';
+
+        const spy = sinon.spy();
+
+        immutableStore.on('change', spy);
+
+        immutableStore.update(path, (ab)=> ab.mergeDeep(Immutable.fromJS({c: [1, 4, 3], d: [1, 1, 2]})));
 
         spy.should.have.been.called;
 
-        expect(spy.lastCall.args[0]).include(path);
-        expect(spy.lastCall.args[0]).include(path+'.1');
+        spy.reset();
 
-        immutableStore.set(path, immutableStore.get(path).push(4));
+        immutableStore.update('a.b.d', (abd)=> abd.push(2));
 
-        expect(spy.lastCall.args[0]).include(path);
-
+        spy.should.have.been.called;
     });
 
     it('should save the history', ()=>{
@@ -89,7 +103,6 @@ describe('ImmutableDataStore specs', ()=>{
 
         expect(immutableStore.history).to.have.length(1);
         expect(immutableStore.history[0].getIn(['a', 'b', 'c', '1'])).to.equal(3);
-
     });
 });
 
@@ -105,17 +118,13 @@ describe('Observer spec', ()=>{
 
         const observer = new Observer(immutableStore);
 
-        const path = 'a.b.c';
-
         const spy = sinon.spy();
 
         observer.observe().forEach(spy);
 
-        immutableStore.set(path, immutableStore.get(path).set(1, 3));
+        immutableStore.update('a.b.c', (data)=> data.set(1, 3));
 
         spy.should.have.been.called;
-
-        expect(spy.lastCall.args[0]).include(path);
     });
 
     it('should call the path observer', ()=>{
@@ -132,11 +141,9 @@ describe('Observer spec', ()=>{
 
         observer.observe('a.b').forEach(spy);
 
-        immutableStore.set(path, immutableStore.get(path).set(1, 3));
+        immutableStore.update('a.b.c', (data)=> data.set(1, 3));
 
         spy.should.have.been.called;
-
-        expect(spy.lastCall.args[0]).include(path);
     });
 
 

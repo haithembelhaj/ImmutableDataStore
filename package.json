@@ -8,7 +8,9 @@
   },
   "private": true,
   "devDependencies": {
+    "babel": "^5.1.13",
     "babelify": "*",
+    "benchmark": "^1.0.0",
     "grunt": "*",
     "grunt-browserify": "*",
     "grunt-contrib-clean": "*",
