@@ -110,6 +110,7 @@ export class Observer {
     constructor(store){
 
         this.store = store;
+        this.changes = Rx.Observable.fromEvent(this.store, 'change');
     }
 
     /**
@@ -119,12 +120,11 @@ export class Observer {
      */
     observe(path = ''){
 
-        let pathData = this.store.get(path);
+        let oldData = this.store.get(path);
 
-        return Rx.Observable
-            .fromEvent(this.store, 'change')
-            .filter(() => pathData !== this.store.get(path))
-            .map(()=> pathData = this.store.get(path))
+        return this.changes
+            .filter(() => oldData !== this.store.get(path))
+            .map(() => oldData = this.store.get(path))
     }
 }
 

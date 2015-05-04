@@ -1,7 +1,7 @@
 {
   "author": "Haithem Bel Haj",
   "name": "immutable-data-store",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "keywords":[
     "immutable",
     "observable",

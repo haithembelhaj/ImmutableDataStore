@@ -144,6 +144,15 @@ describe('Observer spec', ()=>{
         immutableStore.update('a.b.c', (data)=> data.set(1, 3));
 
         spy.should.have.been.called;
+
+        observer.observe('a').forEach(spy);
+
+        spy.reset();
+
+        immutableStore.update('a.b.c', (data)=> data.set(1, 2));
+
+        spy.should.have.been.called;
+
     });
 
 
